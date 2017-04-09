@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+//Subir esto a git
 public class Plataformas : MonoBehaviour {
 
 	public GameObject[] plataformasprefab;  // arreglo que contiene las secciones 
 	private Transform jugadorTransform;
 	private float spawn = 0.0f;  
-	private float distancia = 18.52f; // a que distancia debe aparecer la siguiente seccion
+	private float distancia = 18f; // a que distancia debe aparecer la siguiente seccion
 	private int cantidad = 4; // cuantas secciones habran al tiempo
 	private float zonasegura = 20.0f; // a que distancia (relativa al jugador) debe agregarse y eliminarse una seccion
 	private int randomprefab = 0; 

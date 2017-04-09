@@ -20,7 +20,7 @@ public class Camara : MonoBehaviour {
 
 		///x
 		movimiento.x= 0;  // para que la camara no se mueva lateralmente
-
+		movimiento.y = 7.3F;
 		transform.position = movimiento;
 	}
 }

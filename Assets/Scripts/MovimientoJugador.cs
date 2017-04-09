@@ -9,48 +9,49 @@ public class MovimientoJugador : MonoBehaviour
 	private float VelocidadP = 10.0f;
 	private float VelocidadA = 5.0f;
 	private float Vertical = 0.0f;
-	private float gravedad = 13.0f;
+	private float gravedad = 10.0f;
 	private Vector3 moveVector;
 	private int carril = 0;
 	public float distancia = 0;
 	private float donde;
 	private float newposition = 0.0f;
+	public AudioClip sonidoMoneda = null;
 
 
 
 
 	// Use this for initialization
 	void Start () {
+		
 		carril = 0;
-
 		controller = GetComponent<CharacterController> ();   // componente del personaje
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
-		newposition = transform.position.x;
+		
+		Vertical -= gravedad * Time.deltaTime;
 		distancia = transform.position.z;
 		donde = GameObject.FindGameObjectWithTag ("Respawn").transform.position.z;
 
-		if (controller.isGrounded)  // si esta tocando el suelo su velocidad en y debe ser 0, sino debe actuar la gravedad
-		{ 
-			Vertical = 0.0f;
+		if (transform.position.y > 5) {
+			gravedad = 15;
+		} else {
+			gravedad = 10;
+		}
+
+		if (transform.position.y < 2.6) {
 			Velocidad = VelocidadP;
-
-		}
-		else 
-		{
-			Vertical -= gravedad * Time.deltaTime;
+		} else {
 			Velocidad = VelocidadA;
+		}
 
+		if ((Input.GetKeyDown (KeyCode.UpArrow)) & (transform.position.y < 2.6)) { // codigo para el salto
+			Vertical = 6.0f;
+			gravedad += 2;
 		}
-		 
-		if((Input.GetKeyDown(KeyCode.UpArrow)) & (controller.isGrounded)) // codigo para el salto
-		{
-			Vertical = 8.0f;
-		}
-			
+
+		
 	
 		/// Y
 		moveVector.y = Vertical; 
@@ -59,75 +60,88 @@ public class MovimientoJugador : MonoBehaviour
 		moveVector.z = Velocidad; // moviemiento constante en el eje z para que simpre vaya hacia el frente
 		controller.Move (moveVector * Time.deltaTime);
 
+
 		/// x
 
-		/*
-		if (Input.GetKeyDown (KeyCode.LeftArrow))   // movimiento entre 3 carriles 
-			{ while(newposition > -2.0f)
-			moveVector.x = -7;
-			}*/
-		if (Input.GetKeyDown (KeyCode.LeftArrow) & (carril >-1)) 
-		{ 
-			moveVector.x = -7;
-			StartCoroutine (parar ());
-			carril -= 1;
 
+		/*if ((Input.GetKeyDown (KeyCode.LeftArrow)) && (carril >-1))   // movimiento entre 3 carriles 
+			{ if(newposition > -2.0f)
+			moveVector.x = -4;
+			carril -=1;
+			}
+		if ((Input.GetKeyDown (KeyCode.RightArrow)) && (carril >1))   // movimiento entre 3 carriles 
+		{ if(newposition > -2.0f)
+			moveVector.x = 3;
+			carril +=1;
 		}
-				
+
+		if (newposition <= -2){
+			moveVector.x = 0;}
+
+		if (newposition >= 2){
+			moveVector.x = 0;}*/
+		
 
 
-
-		if (Input.GetKeyDown (KeyCode.RightArrow) & (carril <1)) 
-		{ 
-			moveVector.x = 7;
-			StartCoroutine (parar ());
-			carril += 1;
-
+		if( Input.GetKeyDown(KeyCode.LeftArrow))   // movimiento entre 3 carriles 
+		{if (carril > -1)
+			carril --;
 		}
-			
+		if( Input.GetKeyDown(KeyCode.RightArrow))
+		{if (carril < 1)
+			carril ++;
+		}
+
+
+		Vector3 newposition = transform.position;  // posicionar el objeto segun el valor que tenga la variable "carril"
+		newposition.x = Mathf.Lerp(newposition.x, 2 * carril, Time.deltaTime * 5);
+		transform.position = newposition;
+
 
 			
 		/// aumento progresivo de la velocidad cada 100 metros
 		while (donde < distancia) {
-			donde += 100;
+			donde += 200;
 		}
 
-		if (donde <= 100)
+		if (donde <= 200)
 			VelocidadP = 10;
-		if ((donde > 100) & (donde <=200))
+		if ((donde > 200) & (donde <=400))
 			VelocidadP = 11;
-		if ((donde > 200) & (donde <=300))
+		if ((donde > 400) & (donde <=600))
 			VelocidadP = 12;
-		if ((donde > 300) & (donde <=400))
+		if ((donde > 600) & (donde <=800))
 			VelocidadP = 13;
-		if ((donde > 400) & (donde <=500))
+		if ((donde > 800) & (donde <=1000))
 			VelocidadP = 14;
-		if ((donde > 500) & (donde <=600))
+		if ((donde > 1000) & (donde <=1200))
 			VelocidadP = 15;
-		if ((donde > 600) & (donde <=700))
+		if ((donde > 1200) & (donde <=1400))
 			VelocidadP = 16;
-		if ((donde > 700) & (donde <=800))
+		if ((donde > 1400) & (donde <=1600))
 			VelocidadP = 17;
-		if ((donde > 800) & (donde <=900))
+		if ((donde > 1600) & (donde <=1800))
 			VelocidadP = 18;
-		if ((donde > 900) & (donde <=1000))
+		if ((donde > 1800) & (donde <=2000))
 			VelocidadP = 19;
 
 			
 		Debug.Log (Velocidad);
 		Debug.Log (donde);
 
+
+
+
+	}
+	void OnTriggerEnter (Collider obj){
+		if (obj.gameObject.tag == "coin"){
+			obj.gameObject.SetActive (false);
+			AudioSource.PlayClipAtPoint (sonidoMoneda, transform.position);
 		}
-			
-	IEnumerator parar() {
-		yield return new WaitForSeconds(0.2f);
-		moveVector.x = 0;
-	}
+}
+}
 
-
-
-
-	}
+///
 
 
 
